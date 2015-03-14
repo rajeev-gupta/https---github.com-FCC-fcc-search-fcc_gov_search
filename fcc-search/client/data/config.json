@@ -1,0 +1,7 @@
+{
+    "protocol":"http",
+    "host": "localhost",
+    "port" :"8983",
+    "suffix":"/solr/",
+    "doc_url": "https://apps.fcc.gov/edocs_public/attachmatch/"
+}
