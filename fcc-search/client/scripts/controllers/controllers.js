@@ -10,37 +10,7 @@
       "FCC_Dollars__R1B":"Greater than $1 billion"
      
  };
- 
- var dollar_facet_amounts = {
-     
-      "FCC_Dollars__R0":"[0 TO 1000]",
-      "FCC_Dollars__R1T":"[1000 TO 10000]",
-      "FCC_Dollars__R10T":"[10000 TO 100000]",
-      "FCC_Dollars__R100T":"[100000 TO 1000000]",
-      "FCC_Dollars__R1M":"[1000000 TO 10000000]",
-      "FCC_Dollars__R100M":"[10000000 TO 100000000]",
-      "FCC_Dollars__R1B":"[100000000 TO 1000000000]"
-     
- };
- 
- var frequency_ranges = {
-     
-      "FCC_Frequencies__TLF":"[0 TO 3]",
-      "FCC_Frequencies__ELF":"[3 TO 30]",
-      "FCC_Frequencies__SLF":"[30 TO 300]",
-      "FCC_Frequencies__ULF":"[300 TO 3000]",
-      "FCC_Frequencies__VLF":"[3000 TO 30000]",
-      "FCC_Frequencies__LF":"[30000 TO 300000]",
-      "FCC_Frequencies__MF":"[3000000 TO 30000000]",
-      "FCC_Frequencies__HF":"[30000000 TO 300000000]",
-      "FCC_Frequencies__VHF":"[300000000 TO 3000000000]",
-      "FCC_Frequencies__UHF":"[3000000000 TO 30000000000]",
-      "FCC_Frequencies__SHF":"[30000000000 TO 300000000000]",
-      "FCC_Frequencies__EHF":"[300000000000 TO 3000000000000]",
-      "FCC_Frequencies__THF":"[3000000000000 TO 30000000000000]"
-     
- };
- 
+  
  var bureaus = {
         "WTB":"Wireless Telecommunications Bureau",
         "MB":"Media Bureau",
@@ -332,7 +302,7 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
             var exists = false;
             var value = event.target.value;
             var facet_part = $scope.data[parent].children[child].facet;
-            var facet_prefix_query = "";
+            var facet_filter = [];
             event.preventDefault();
             if (value)
             {
@@ -345,99 +315,21 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
                     });
                     
                    if (!exists)
-                        {
-                            switch (facet_part)
-                            {
-                                case "topics":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_Dockets":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "dockets":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "daNo":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "fccNo":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "fccRecord":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "fileNumber":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "reportNumber":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "federalRegisterCitation":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_Rules":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_Codes":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_Records":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_Forms":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "FCC_CallSigns":
-                                    facet_prefix_query = "&f." + facet_part + ".facet.prefix=" + value;
-                                    break;
-                                case "taxonomies":
-                                    facet_prefix_query = "&fq=" + facet_part + "_index:(" + value + ")";
-                                    break;
-                                 case "authors":
-                                    facet_prefix_query = "&fq=" + facet_part + "_index:(" + value + ")";
-                                    break;
-                                 case "FCC_CaseCitations":
-                                    facet_prefix_query = "&fq=" + facet_part + "_index:(" + value + ")";
-                                    break;
-                                  case "FCC_Dollars":
-                                        var isError = get_range_queries(value, facet_part, 4999, 1500001);
-                                        
-                                        if (isError == true)
-                                        {
-                                        	$scope.modal_open("sm", "Please enter a valid money range of the from: 5K - 1.5M");
-                                        }
-                                        else
-                                        {
-                                            facet_prefix_query = isError;
-                                        }
-                                    break;
-                                  case "FCC_Frequencies":
-                                    var isError = get_range_queries(value, facet_part, 99, 100000001);
-                                        if (isError == true)
-                                        {
-                                        	$scope.modal_open("sm", "Please enter a valid frequency range of the from: 100 Hz - 100 MHz");
-                                        }
-                                        else
-                                        {
-                                            facet_prefix_query = isError;
-                                        }
-                                    break;
-                            }
-                        };
+                   {
+                	   var facet_object = {"facet": facet_part, "value":value};
+                   		facet_filter.push(facet_object);
+                   }
 
-                    if (facet_prefix_query)
+                    if (facet_filter.length > 0)
                     {
-                        
-                        facet_prefix_query = facet_prefix_query + "&facet.limit=25&facet.mincount=1&facet=true&facet.sort=index&facet.field=" + facet_part;
-
-                        var term = $scope.asyncSelected;
+                    	var term = $scope.asyncSelected;
                         if (term)
                         {
-                            get_input_facet_results(current_selection, term, facet_prefix_query, facet_part);
+                            get_input_facet_results(current_selection, term, facet_filter, facet_part);
                         }
                        else
                        {
-                             get_input_facet_results(current_selection, "*:*", facet_prefix_query, facet_part);
+                             get_input_facet_results(current_selection, "*:*", facet_filter, facet_part);
                        }
                                                                      
                        
@@ -452,58 +344,6 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
         
      };
      
-     function get_range_queries(value, fct, limit1, limit2)
-    {
-        var query = "";
-        var tos = value.indexOf("-") > -1;
-        var isError = false;
-        if (tos)
-        {
-            var res = value.split("-");
-
-            if (res)
-            {
-                var from = Number(res[0].trim());
-                var to = Number(res[1].trim());
-
-                if (from > limit1 && from < limit2) {
-
-                    if (to > limit1 && to < limit2) {
-
-                        if (from < to)
-                        {
-                            query = "&fq=(" + fct + ":[" + from + " TO " + to + "])";
-                            return query;
-                        }
-                        else
-                        {
-                            isError = true;
-                        }
-
-                    }
-                    else
-                    {
-                        isError = true;
-                    }
-                }
-                else
-                {
-                    isError = true;
-                    
-                }
-
-
-            }
-        }
-        else
-        {
-            isError = true;
-        }
-        if (isError)
-        {
-            return isError;
-        }
-    }
     
      $scope.toggleSelection = function(a, b, c, obj_name){
          
@@ -516,7 +356,7 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
 
         var term = $scope.asyncSelected;
         
-        var facet_filter_string = "";
+        var facet_filter = [];
 
         _.map($scope.data, 
             function(item)
@@ -533,41 +373,9 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
                     _.find(d, function(num){ 
                         if (num.selected == true)
                         {
-                            var str = "";
-                            switch(ch.facet)
-                            {
-                                case "adoptedDate":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                 case "lastModifiedDate":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                case "issuedDate":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                 case "commentDate":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                  case "created":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                case "replyCommentDate":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                case "changed":
-                                    str = get_year_end_date_query(num.value, ch.facet);
-                                    break;
-                                case "FCC_Frequencies":
-                                    str = '&fq=' + ch.facet + ':' + frequency_ranges[num.value];
-                                    break;    
-                                case "FCC_Dollars":
-                                    str = '&fq=' + ch.facet + ':' + dollar_facet_amounts[num.value];
-                                    break;
-                                default:
-                                     str = '&fq=' + ch.facet + ':"' + num.value.replace('&', '%26') + '"';
-                                     break;
-                            }
-                            facet_filter_string += str;
+                        	var facet_object = {"facet": ch.facet, "value":num.value};
+                        	facet_filter.push(facet_object);
+                            
                         }
                     });
 
@@ -575,32 +383,19 @@ app.controller('fcc_gov_search_controller', ['$location', "$scope","SearchFactor
                 );
             }
          );
- 
+        
          if (term)
          {
-             get_faceted_search_results(current_selection, term, facet_filter_string);
+             get_faceted_search_results(current_selection, term, facet_filter);
          }
         else
         {
-                get_faceted_search_results(current_selection, "*:*", facet_filter_string);
+                get_faceted_search_results(current_selection, "*:*", facet_filter);
         }
         
         $scope.bigCurrentPage = 1;
-        
+
     };
-    
-    function get_year_end_date_query(first_day_iso_date, facet)
-    {
-        var year_digit =  first_day_iso_date.charAt(3);
-       
-        var y = Number(year_digit) + 1;
-       
-        var last_day_iso_date = first_day_iso_date.substring(0, 3) + y + first_day_iso_date.substring(4, first_day_iso_date.length);
-        
-        var date_facet = "&fq=" + facet + ":[" + first_day_iso_date + " TO " + last_day_iso_date + "]";
-        
-        return date_facet;
-    }
     
     var search_tooltips;
     

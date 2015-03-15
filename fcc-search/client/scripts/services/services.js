@@ -107,8 +107,8 @@ app.factory('SearchFactory', function($http) {
       }
       var output = {};
       
-      var url = '/search?source=' + name + "&query=" + term + "&start=" + start + + "&fq=" + fq;
-     
+      var url = '/search?source=' + name + "&query=" + term + "&start=" + start + "&fq=" + JSON.stringify(fq) + "&query_type=input";
+      
        return $http.get(url).then(function(result) {
         
 
@@ -125,18 +125,18 @@ app.factory('SearchFactory', function($http) {
     
      factory.facet_query = function(name, term, fq, start){
 
-        if (start)
-      {
-          
-      }
-      else
-      {
-          start = 0;
-      }
+    	if ( typeof start !== 'undefined' && start )
+	    {
+	    }
+    	else
+		{
+    		start = 0;
+		}
+	   
       var output = {};
-      
-      var url = '/search?source=' + name + "&query=" + term + "&start=" + start + + "&fq=" + fq;
-       
+   
+      var url = '/search?source=' + name + "&query=" + term + "&start=" + start + "&fq=" + JSON.stringify(fq) + "&query_type=facet";
+
        return $http.get(url).then(function(result) {
         
 

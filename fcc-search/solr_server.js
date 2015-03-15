@@ -1,3 +1,138 @@
+var config = require('./client/data/config.json');
+
+var dollar_facet_amounts = {
+	     
+	      "FCC_Dollars__R0":"[0 TO 1000]",
+	      "FCC_Dollars__R1T":"[1000 TO 10000]",
+	      "FCC_Dollars__R10T":"[10000 TO 100000]",
+	      "FCC_Dollars__R100T":"[100000 TO 1000000]",
+	      "FCC_Dollars__R1M":"[1000000 TO 10000000]",
+	      "FCC_Dollars__R100M":"[10000000 TO 100000000]",
+	      "FCC_Dollars__R1B":"[100000000 TO 1000000000]"
+	     
+	 };
+	 
+	 var frequency_ranges = {
+	     
+	      "FCC_Frequencies__TLF":"[0 TO 3]",
+	      "FCC_Frequencies__ELF":"[3 TO 30]",
+	      "FCC_Frequencies__SLF":"[30 TO 300]",
+	      "FCC_Frequencies__ULF":"[300 TO 3000]",
+	      "FCC_Frequencies__VLF":"[3000 TO 30000]",
+	      "FCC_Frequencies__LF":"[30000 TO 300000]",
+	      "FCC_Frequencies__MF":"[3000000 TO 30000000]",
+	      "FCC_Frequencies__HF":"[30000000 TO 300000000]",
+	      "FCC_Frequencies__VHF":"[300000000 TO 3000000000]",
+	      "FCC_Frequencies__UHF":"[3000000000 TO 30000000000]",
+	      "FCC_Frequencies__SHF":"[30000000000 TO 300000000000]",
+	      "FCC_Frequencies__EHF":"[300000000000 TO 3000000000000]",
+	      "FCC_Frequencies__THF":"[3000000000000 TO 30000000000000]"
+	     
+	 };
+	 
+     function get_range_queries(value, fct)
+     {
+         var query = "";
+         var tos = value.indexOf("-") > -1;
+
+         if (tos)
+         {
+             var res = value.split("-");
+
+             if (res)
+             {
+                 var from = Number(res[0].trim());
+                 var to = Number(res[1].trim());
+
+                 query = "&fq=(" + fct + ":[" + from + " TO " + to + "])";
+             }
+         }
+             return query;
+     }
+     
+	 
+function create_facet_prefix_query(facets_string){
+	
+var facets_array = JSON.parse(facets_string);
+	
+	var facet_string = "";
+	
+	var facet_array_length = facets_array.length;
+	
+	for (var i = 0; i < facet_array_length; i++) {
+		
+		var facet_object = facets_array[i];
+		var str = "";
+		
+		var facet_part = facet_object.facet;
+		var value = facet_object.value;
+        
+     switch (facet_part)
+     {
+         case "topics":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_Dockets":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "dockets":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "daNo":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "fccNo":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "fccRecord":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "fileNumber":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "reportNumber":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "federalRegisterCitation":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_Rules":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_Codes":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_Records":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_Forms":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "FCC_CallSigns":
+             str = str +"&f." + facet_part + ".facet.prefix=" + value;
+             break;
+         case "taxonomies":
+             str = str +"&fq=" + facet_part + "_index:(" + value + ")";
+             break;
+          case "authors":
+             str = str +"&fq=" + facet_part + "_index:(" + value + ")";
+             break;
+          case "FCC_CaseCitations":
+             str = str +"&fq=" + facet_part + "_index:(" + value + ")";
+             break;
+           case "FCC_Dollars":
+        	   str = str +get_range_queries(value, facet_part);
+             break;
+           case "FCC_Frequencies":
+        	   str = str +get_range_queries(value, facet_part);
+                 break;
+         }
+     facet_string = facet_string + str + "&facet.limit=25&facet.mincount=1&facet=true&facet.sort=index&facet.field=" + facet_part;
+	}
+         return facet_string;
+      }
+      
+
 
 function get_edocs_web_facets()
 {
@@ -390,14 +525,77 @@ function create_query(url, current_selection, term, start, facet)
     
     if (facet)
     {
-       
     }
     else
     {
-         path = path + add_facets(current_selection);
+        path = path + add_facets(current_selection);
     }
-    
+   
     return path;
+}
+
+function create_facet_query(facets_string){
+	
+	var facets_array = JSON.parse(facets_string);
+	
+	var facet_string = "";
+	
+	var facet_array_length = facets_array.length;
+	
+	for (var i = 0; i < facet_array_length; i++) {
+		
+		var facet_object = facets_array[i];
+		var str = "";
+		 switch(facet_object.facet)
+	      {
+	          case "adoptedDate":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	           case "lastModifiedDate":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	          case "issuedDate":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	           case "commentDate":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	            case "created":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	          case "replyCommentDate":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	          case "changed":
+	              str = get_year_end_date_query(facet_object.value, facet_object.facet);
+	              break;
+	          case "FCC_Frequencies":
+	              str = '&fq=' + facet_object.facet + ':' + frequency_ranges[facet_object.value];
+	              break;    
+	          case "FCC_Dollars":
+	              str = '&fq=' + facet_object.facet + ':' + dollar_facet_amounts[facet_object.value];
+	              break;
+	          default:
+	              str = '&fq=' + facet_object.facet + ':"' + facet_object.value.replace('&', '%26') + '"';
+	               break;
+	      }
+		 facet_string = facet_string + str;
+	}
+	
+	return facet_string;
+}
+
+function get_year_end_date_query(first_day_iso_date, facet)
+{
+    var year_digit =  first_day_iso_date.charAt(3);
+   
+    var y = Number(year_digit) + 1;
+   
+    var last_day_iso_date = first_day_iso_date.substring(0, 3) + y + first_day_iso_date.substring(4, first_day_iso_date.length);
+    
+    var date_facet = "&fq=" + facet + ":[" + first_day_iso_date + " TO " + last_day_iso_date + "]";
+    
+    return date_facet;
 }
 
 var solr_request = function(req, res){
@@ -417,12 +615,29 @@ var solr_request = function(req, res){
 			req_query = encodeURI(query);
 			break;
 		default:
-			var fq = req.query.source.fq;
+			var fq = req.query.fq;
+			var facet_string = "";
+		
+			console.log("REQUEST: " + JSON.stringify(req.query));
+			
 			var num = parseInt( req.query.start) || 0;
 			if (fq)
 			{
 				query = create_query("/solr/", req.query.source, req.query.query, num, fq);
-				query = query + fq;
+				
+				switch(req.query.query_type)
+				{
+					case "input":
+						facet_string = create_facet_prefix_query(fq);
+						break;
+					case "facet":
+						facet_string = create_facet_query(fq);
+						break;
+				}
+				
+				console.log("FACET_STRING: " + facet_string);
+				
+				query = query + facet_string;
 			}
 			else
 			{
@@ -439,11 +654,11 @@ var solr_request = function(req, res){
 	}
 	
 	
-	console.log("PATH: " + req_query);
+//	console.log("PATH: " + req_query);
 	var options = 
 	{
-		host : 'localhost',
-	    port : 8983,
+		host : config.host,
+	    port : config.port,
 	    path : req_query, // the rest of the url with parameters if needed
 	    method : 'GET' // do GET
 	};
